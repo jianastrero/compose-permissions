@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "dev.jianastrero.composepermissions"
+    namespace = "dev.jianastrero.compose_permissions.example"
     compileSdk = 33
 
     defaultConfig {
-        applicationId = "dev.jianastrero.composepermissions"
+        applicationId = "dev.jianastrero.compose_permissions.example"
         minSdk = 24
         targetSdk = 33
         versionCode = 1

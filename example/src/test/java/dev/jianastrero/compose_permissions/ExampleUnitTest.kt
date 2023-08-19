@@ -1,4 +1,4 @@
-package dev.jianastrero.composepermissions
+package dev.jianastrero.compose_permissions
 
 import org.junit.Test
 

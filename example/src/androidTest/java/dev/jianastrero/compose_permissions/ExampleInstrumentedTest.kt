@@ -1,4 +1,4 @@
-package dev.jianastrero.composepermissions
+package dev.jianastrero.compose_permissions
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
