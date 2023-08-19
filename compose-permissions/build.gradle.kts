@@ -17,19 +17,6 @@ plugins {
     id("maven-publish")
 }
 
-repositories {
-    google()
-    mavenCentral()
-    maven {
-        name = "GitHubPackages"
-        url = uri("https://maven.pkg.github.com/jianastrero/compose-permissions")
-        credentials {
-            username = githubUsername
-            password = githubKey
-        }
-    }
-}
-
 publishing {
     publications {
         create<MavenPublication>("release") {
@@ -39,6 +26,16 @@ publishing {
 
             afterEvaluate {
                 from(components["release"])
+            }
+        }
+    }
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/jianastrero/compose-permissions")
+            credentials {
+                username = githubUsername
+                password = githubKey
             }
         }
     }
