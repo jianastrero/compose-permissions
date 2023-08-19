@@ -24,6 +24,18 @@
 
 package dev.jianastrero.compose_permissions.enumeration
 
+/**
+ * Represents the status of a permission.
+ *
+ * This enum class defines two possible values for the status of a permission:
+ * - [Granted] indicates that the permission has been granted.
+ * - [Denied] indicates that the permission has been denied.
+ *
+ * Usage example:
+ * ```
+ * val status = PermissionStatus.Granted
+ * if (status == PermissionStatus.Granted) {
+ *    */
 enum class PermissionStatus {
     Granted,
     Denied
