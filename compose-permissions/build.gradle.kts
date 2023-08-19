@@ -8,12 +8,18 @@ val localProperties = Properties().apply {
     }
 }
 
-val spaceUsername: String? by localProperties
-val spacePassword: String? by localProperties
+val githubUsername: String? by localProperties
+val githubPassword: String? by localProperties
 
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    id("maven-publish")
+}
+
+task("sourceJar", type = Jar::class) {
+    from(android.sourceSets.maybeCreate("main").java.srcDirs)
+    archiveClassifier.set("sources")
 }
 
 repositories {
@@ -21,10 +27,37 @@ repositories {
     mavenCentral()
 
     maven {
-        url = uri("https://maven.pkg.jetbrains.space/jianandshaira/p/compose-permissions/maven")
+        url = uri("https://maven.pkg.github.com/jianastrero/compose-permissions")
         credentials {
-            username = spaceUsername
-            password = spacePassword
+            username = githubUsername
+            password = githubPassword
+        }
+    }
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = "dev.jianastrero"
+            artifactId = "compose-permissions"
+            version = "1.0.0"
+            artifact("sourceJar")
+            artifact("$buildDir/outputs/aar/compose-permissions-release.aar")
+
+            pom {
+                withXml {
+                    val dependenciesNode = asNode().appendNode("dependencies")
+
+                    project.configurations.implementation.get().allDependencies.forEach {
+                        if (it.group != null || it.version != null || it.name == "unspecified") return@forEach
+
+                        val dependencyNode = dependenciesNode.appendNode("dependency")
+                        dependencyNode.appendNode("groupId", it.group)
+                        dependencyNode.appendNode("artifactId", it.name)
+                        dependencyNode.appendNode("version", it.version)
+                    }
+                }
+            }
         }
     }
 }
