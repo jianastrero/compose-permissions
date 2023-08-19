@@ -14,5 +14,5 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Compose Permissions"
-include(":app")
+include(":example")
 include(":compose-permissions")
