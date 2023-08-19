@@ -1,5 +1,7 @@
+import com.android.build.gradle.internal.utils.createPublishingInfoForLibrary
 import java.io.FileInputStream
 import java.util.*
+import org.gradle.internal.impldep.com.amazonaws.util.XpathUtils.asNode
 
 val localProperties = Properties().apply {
     val localPropertiesFile = rootProject.file("local.properties")
@@ -33,11 +35,10 @@ repositories {
 
 publishing {
     publications {
-        create<MavenPublication>("maven") {
+        create<MavenPublication>("release") {
             groupId = "dev.jianastrero"
             artifactId = "compose-permissions"
             version = "1.0.0"
-            artifact("$buildDir/outputs/aar/compose-permissions-release.aar")
 
             pom {
                 withXml {
@@ -53,6 +54,10 @@ publishing {
                     }
                 }
             }
+
+            afterEvaluate {
+                from(components["release"])
+            }
         }
     }
 }
@@ -66,6 +71,10 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+
+        aarMetadata {
+            minCompileSdk = 24
+        }
     }
 
     buildTypes {
@@ -86,6 +95,13 @@ android {
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.3"
+    }
+
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
     }
 }
 
