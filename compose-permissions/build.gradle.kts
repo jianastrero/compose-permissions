@@ -22,7 +22,7 @@ repositories {
     mavenCentral()
     maven {
         name = "GitHubPackages"
-        url = uri("https://maven.pkg.github.com/USERNAME/REPO")
+        url = uri("https://maven.pkg.github.com/jianastrero/compose-permissions")
         credentials {
             username = githubUsername
             password = githubKey
