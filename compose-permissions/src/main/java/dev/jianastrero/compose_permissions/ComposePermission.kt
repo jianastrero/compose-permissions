@@ -37,21 +37,51 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import dev.jianastrero.compose_permissions.enumeration.PermissionStatus
 
+/**
+ * Represents a ComposePermission object that provides functionality for managing a permission status.
+ *
+ * @constructor Creates a ComposePermission object with a default permission status of Denied.
+ */
 class ComposePermission internal constructor() {
     internal var _value by mutableStateOf(PermissionStatus.Denied)
     internal var launch by mutableStateOf<() -> Unit>({})
 
+    /**
+     * Represents the status of a permission.
+     *
+     * The permission status indicates whether the app was granted the permission or not.
+     * This is a read-only property.
+     *
+     * @return The status of a permission.
+     */
     val value: PermissionStatus
         get() = _value
 
+    /**
+     * Determines if the permission is granted.
+     *
+     * @return `true` if the permission is granted, `false` otherwise.
+     */
     val isGranted: Boolean
         get() = _value == PermissionStatus.Granted
 
+    /**
+     * Sends a request to perform an action. This method should be called when it is required to make a request for an action
+     * without any additional parameters.
+     *
+     * @return Unit
+     */
     fun request() {
         launch()
     }
 }
 
+/**
+ * Composes a permission request for a given permission.
+ *
+ * @param permission The permission to request.
+ * @return The composed `ComposePermission` object.
+ */
 @Composable
 fun composePermission(permission: String): ComposePermission {
     val context = LocalContext.current
