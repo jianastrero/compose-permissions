@@ -37,21 +37,6 @@ publishing {
             artifactId = "compose-permissions"
             version = "1.0.0"
 
-            pom {
-                withXml {
-                    val dependenciesNode = asNode().appendNode("dependencies")
-
-                    project.configurations.implementation.get().allDependencies.forEach {
-                        if (it.group != null || it.version != null || it.name == "unspecified") return@forEach
-
-                        val dependencyNode = dependenciesNode.appendNode("dependency")
-                        dependencyNode.appendNode("groupId", it.group)
-                        dependencyNode.appendNode("artifactId", it.name)
-                        dependencyNode.appendNode("version", it.version)
-                    }
-                }
-            }
-
             afterEvaluate {
                 from(components["release"])
             }
