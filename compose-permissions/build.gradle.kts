@@ -1,6 +1,32 @@
+import java.io.FileInputStream
+import java.util.*
+
+val localProperties = Properties().apply {
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        load(FileInputStream(localPropertiesFile))
+    }
+}
+
+val spaceUsername: String? by localProperties
+val spacePassword: String? by localProperties
+
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+}
+
+repositories {
+    google()
+    mavenCentral()
+
+    maven {
+        url = uri("https://maven.pkg.jetbrains.space/jianandshaira/p/compose-permissions/maven")
+        credentials {
+            username = spaceUsername
+            password = spacePassword
+        }
+    }
 }
 
 android {
@@ -16,7 +42,7 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
