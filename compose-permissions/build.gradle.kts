@@ -1,7 +1,5 @@
-import com.android.build.gradle.internal.utils.createPublishingInfoForLibrary
 import java.io.FileInputStream
 import java.util.*
-import org.gradle.internal.impldep.com.amazonaws.util.XpathUtils.asNode
 
 val localProperties = Properties().apply {
     val localPropertiesFile = rootProject.file("local.properties")
@@ -11,7 +9,7 @@ val localProperties = Properties().apply {
 }
 
 val githubUsername: String? by localProperties
-val githubPassword: String? by localProperties
+val githubKey: String? by localProperties
 
 plugins {
     id("com.android.library")
@@ -22,13 +20,12 @@ plugins {
 repositories {
     google()
     mavenCentral()
-
     maven {
         name = "GitHubPackages"
-        url = uri("https://maven.pkg.github.com/jianastrero/compose-permissions")
+        url = uri("https://maven.pkg.github.com/USERNAME/REPO")
         credentials {
             username = githubUsername
-            password = githubPassword
+            password = githubKey
         }
     }
 }
