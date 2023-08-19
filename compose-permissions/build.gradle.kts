@@ -22,7 +22,7 @@ publishing {
         create<MavenPublication>("release") {
             groupId = "dev.jianastrero"
             artifactId = "compose-permissions"
-            version = "1.0.0"
+            version = "1.0.1"
 
             afterEvaluate {
                 from(components["release"])
@@ -53,13 +53,6 @@ android {
 
         aarMetadata {
             minCompileSdk = 24
-        }
-    }
-
-    buildTypes {
-        release {
-            isMinifyEnabled = true
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
     compileOptions {
