@@ -17,11 +17,6 @@ plugins {
     id("maven-publish")
 }
 
-task("sourceJar", type = Jar::class) {
-    from(android.sourceSets.maybeCreate("main").java.srcDirs)
-    archiveClassifier.set("sources")
-}
-
 repositories {
     google()
     mavenCentral()
@@ -42,7 +37,6 @@ publishing {
             groupId = "dev.jianastrero"
             artifactId = "compose-permissions"
             version = "1.0.0"
-            artifact("sourceJar")
             artifact("$buildDir/outputs/aar/compose-permissions-release.aar")
 
             pom {
