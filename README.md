@@ -16,7 +16,7 @@ not.
 
 ## Demo
 
-<img src="assets/demo.gif" width="300" alt="Compose Permissions Demo GIF">
+![Compose Permissions Demo GIF](assets/demo.gif)
 
 ## Installation
 
