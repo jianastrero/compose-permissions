@@ -80,6 +80,14 @@ if (!cameraPermission.isGranted) {
 }
 ```
 
+## What's Next?
+- [ ] Add support for multiple permissions
+- [ ] Add support for iOS and other platforms (Kotlin Multiplatform)
+
+## Contributing
+
+We value all forms of contributions from the community, including bug reports, issues, pull requests, documentation updates, and other improvements. Please respect our guidelines and community when making a contribution.
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
