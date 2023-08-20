@@ -1,4 +1,4 @@
-# Compose Permissions
+# 😌 Compose Permissions
 
 Streamline permission handling in Android Jetpack Compose applications with Compose Permissions.
 
@@ -80,11 +80,11 @@ if (!cameraPermission.isGranted) {
 }
 ```
 
-## What's Next?
+## 🚀 What's Next?
 - [ ] Add support for multiple permissions
 - [ ] Add support for iOS and other platforms (Kotlin Multiplatform)
 
-## Contributing
+## ✒️ Contributing
 
 We value all forms of contributions from the community, including bug reports, issues, pull requests, documentation updates, and other improvements. Please respect our guidelines and community when making a contribution.
 
