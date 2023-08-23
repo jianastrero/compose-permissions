@@ -50,7 +50,7 @@ import dev.jianastrero.compose_permissions.model.PermissionItem
 class ComposePermission internal constructor() {
     internal var _permissions = emptyArray<String>()
     internal var _permissionItems by mutableStateOf(emptyMap<String, PermissionItem>())
-    internal var launch by mutableStateOf<() -> Unit>({})
+    internal var launch by mutableStateOf<(Array<String>) -> Unit>({})
 
     /**
      * Getter for the `value` variable.
@@ -72,24 +72,27 @@ class ComposePermission internal constructor() {
         get() = _permissionItems.all { it.value.status == PermissionStatus.Granted }
 
     /**
-     * Indicates whether the rationale should be shown for each permission item.
+     * Indicates whether the rationale should be shown for all permission item.
      *
-     * @return `true` if the rationale should be shown for each permission item, `false` otherwise.
+     * @return `true` if the rationale should be shown for all permission item, `false` otherwise.
      */
     val shouldShowRationale: Boolean
         get() = _permissionItems.all { it.value.shouldShowRationale }
 
     /**
-     * Makes a request by calling the [launch] method.
+     * Request permissions from the user.
+     *
+     * @param permissions The list of permissions to request from the user. Defaults to all permissions.
      */
-    fun request() {
-        launch()
+    fun request(vararg permissions: String) {
+        val permissionList = if (permissions.isEmpty()) _permissions else arrayOf(*permissions)
+        launch(permissionList)
     }
 
     /**
      * Retrieves the permission status for the given permissions.
      *
-     * @param permissions the permissions to retrieve the status for
+     * @param permissions the permissions to retrieve the status for. Defaults to all permissions.
      * @return a map containing the permission as the key and its status as the value
      */
     operator fun get(vararg permissions: String): Map<String, PermissionStatus> {
@@ -102,7 +105,7 @@ class ComposePermission internal constructor() {
     /**
      * Retrieves the permission status for the given permissions.
      *
-     * @param permissions the permissions to retrieve the status for
+     * @param permissions the permissions to retrieve the status for. Defaults to all permissions.
      * @return a map of permissions and their corresponding status
      */
     fun value(vararg permissions: String): Map<String, PermissionStatus> = get(*permissions)
@@ -110,8 +113,7 @@ class ComposePermission internal constructor() {
     /**
      * Checks if all the given permissions are granted.
      *
-     * @param permissions the permissions to check
-     *
+     * @param permissions the permissions to check. Defaults to all permissions.
      * @return `true` if all the permissions are granted, `false` otherwise
      */
     fun isGranted(vararg permissions: String): Boolean = get(*permissions)
@@ -120,7 +122,7 @@ class ComposePermission internal constructor() {
     /**
      * Determines whether rationale should be shown for the given permissions.
      *
-     * @param permissions the list of permissions to be checked
+     * @param permissions the list of permissions to be checked. Defaults to all permissions.
      * @return true if rationale should be shown, false otherwise
      */
     fun shouldShowRationale(vararg permissions: String): Boolean = get(*permissions)
@@ -151,11 +153,8 @@ fun composePermission(permission: String, vararg otherPermissions: String): Comp
         }
     }
 
-    composePermission.launch = {
-        launcher.launch(permissions)
-    }
-
     DisposableEffect(activity) {
+        composePermission.launch = launcher::launch
         composePermission._permissions = permissions
         composePermission._permissionItems = permissions.associateWith {
             PermissionItem(
