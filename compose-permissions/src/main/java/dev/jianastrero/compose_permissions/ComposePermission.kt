@@ -37,77 +37,136 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import dev.jianastrero.compose_permissions.enumeration.PermissionStatus
+import dev.jianastrero.compose_permissions.model.PermissionItem
 
 /**
- * Represents a ComposePermission object that provides functionality for managing a permission status.
+ * The `ComposePermission` class represents a permission object that can be used
+ * to request and check permissions in a Compose-based application.
  *
- * @constructor Creates a ComposePermission object with a default permission status of Denied.
+ * @property value A map of permissions and their corresponding status.
+ * @property isGranted Indicates whether all permissions are granted.
+ * @property shouldShowRationale Indicates whether permission rationale should be shown.
  */
 class ComposePermission internal constructor() {
-    internal var _value by mutableStateOf(PermissionStatus.Denied)
-    internal var _shouldShowRationale by mutableStateOf(false)
+    internal var _permissions = emptyArray<String>()
+    internal var _permissionItems by mutableStateOf(emptyMap<String, PermissionItem>())
     internal var launch by mutableStateOf<() -> Unit>({})
 
     /**
-     * Represents the status of a permission.
+     * Getter for the `value` variable.
      *
-     * The permission status indicates whether the app was granted the permission or not.
-     * This is a read-only property.
+     * Returns a Map of String keys to PermissionStatus values.
+     * Each key corresponds to a permission item, and the corresponding value represents the status of that permission.
      *
-     * @return The status of a permission.
+     * @return A Map of String keys to PermissionStatus values.
      */
-    val value: PermissionStatus
-        get() = _value
+    val value: Map<String, PermissionStatus>
+        get() = _permissionItems.mapValues { it.value.status }
 
     /**
-     * Determines if the permission is granted.
+     * Determines whether all permission items have been granted.
      *
-     * @return `true` if the permission is granted, `false` otherwise.
+     * @return `true` if all permission items are granted, `false` otherwise.
      */
     val isGranted: Boolean
-        get() = _value == PermissionStatus.Granted
+        get() = _permissionItems.all { it.value.status == PermissionStatus.Granted }
 
     /**
-     * Indicates whether rationale should be shown.
+     * Indicates whether the rationale should be shown for each permission item.
      *
-     * @return `true` if rationale should be shown, `false` otherwise.
+     * @return `true` if the rationale should be shown for each permission item, `false` otherwise.
      */
     val shouldShowRationale: Boolean
-        get() = _shouldShowRationale
+        get() = _permissionItems.all { it.value.shouldShowRationale }
 
     /**
-     * Sends a request to perform an action. This method should be called when it is required to make a request for an action
-     * without any additional parameters.
-     *
-     * @return Unit
+     * Makes a request by calling the [launch] method.
      */
     fun request() {
         launch()
     }
-}
 
-
-@Composable
-fun composePermission(permission: String): ComposePermission {
-    val activity = LocalContext.current as Activity
-    val composePermission = remember {
-        ComposePermission()
+    /**
+     * Retrieves the permission status for the given permissions.
+     *
+     * @param permissions the permissions to retrieve the status for
+     * @return a map containing the permission as the key and its status as the value
+     */
+    operator fun get(vararg permissions: String): Map<String, PermissionStatus> {
+        val x = if (permissions.isEmpty()) _permissions else permissions
+        return _permissionItems
+            .filterKeys { it in x }
+            .mapValues { it.value.status }
     }
 
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-        composePermission._value = if (isGranted) PermissionStatus.Granted else PermissionStatus.Denied
+    /**
+     * Retrieves the permission status for the given permissions.
+     *
+     * @param permissions the permissions to retrieve the status for
+     * @return a map of permissions and their corresponding status
+     */
+    fun value(vararg permissions: String): Map<String, PermissionStatus> = get(*permissions)
+
+    /**
+     * Checks if all the given permissions are granted.
+     *
+     * @param permissions the permissions to check
+     *
+     * @return `true` if all the permissions are granted, `false` otherwise
+     */
+    fun isGranted(vararg permissions: String): Boolean = get(*permissions)
+        .all { it.value == PermissionStatus.Granted }
+
+    /**
+     * Determines whether rationale should be shown for the given permissions.
+     *
+     * @param permissions the list of permissions to be checked
+     * @return true if rationale should be shown, false otherwise
+     */
+    fun shouldShowRationale(vararg permissions: String): Boolean = get(*permissions)
+        .all { it.value == PermissionStatus.Denied }
+}
+
+/**
+ * Composes a permission with optional additional permissions.
+ *
+ * @param permission The main permission to be composed.
+ * @param otherPermissions Additional permissions to be composed.
+ * @return A ComposePermission object that can be used to handle permission requests.
+ */
+@Composable
+fun composePermission(permission: String, vararg otherPermissions: String): ComposePermission {
+    val activity = LocalContext.current as Activity
+    val permissions = remember { arrayOf(permission, *otherPermissions) }
+    val composePermission = remember { ComposePermission() }
+
+    val launcher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { map ->
+        composePermission._permissionItems = map.mapValues {
+            PermissionItem(
+                status = if (it.value) PermissionStatus.Granted else PermissionStatus.Denied,
+                shouldShowRationale = activity.shouldShowRequestPermissionRationale(it.key)
+            )
+        }
     }
 
     composePermission.launch = {
-        launcher.launch(permission)
+        launcher.launch(permissions)
     }
 
     DisposableEffect(activity) {
-        composePermission._value = when (ContextCompat.checkSelfPermission(activity, permission)) {
-            PackageManager.PERMISSION_GRANTED -> PermissionStatus.Granted
-            else -> PermissionStatus.Denied
+        composePermission._permissions = permissions
+        composePermission._permissionItems = permissions.associateWith {
+            PermissionItem(
+                status = if (ContextCompat.checkSelfPermission(activity, it) == PackageManager.PERMISSION_GRANTED) {
+                    PermissionStatus.Granted
+                } else {
+                    PermissionStatus.Denied
+                },
+                shouldShowRationale = activity.shouldShowRequestPermissionRationale(it)
+            )
         }
-        composePermission._shouldShowRationale = activity.shouldShowRequestPermissionRationale(permission)
         onDispose { /* Do Nothing */ }
     }
 
