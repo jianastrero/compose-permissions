@@ -65,6 +65,16 @@ if (!cameraPermission.isGranted) {
 
 ## Documentation
 
+### value
+
+- **Description:** Returns the value of the permission.
+- **Type:** `String`
+- **Usage:**
+
+```kotlin
+cameraPermission.value
+```
+
 ### isGranted
 
 - **Description:** Returns true if the permission is granted, false otherwise.
