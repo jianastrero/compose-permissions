@@ -63,6 +63,42 @@ if (!cameraPermission.isGranted) {
 }
 ```
 
+## Documentation
+
+### isGranted
+
+- **Description:** Returns true if the permission is granted, false otherwise.
+- **Type:** `Boolean`
+- **Usage:**
+
+```kotlin
+if (!cameraPermission.isGranted) {
+    cameraPermission.request()
+}
+```
+
+### shouldShowRationale
+
+- **Description:** Returns true if the permission should show rationale, false otherwise.
+- **Type:** `Boolean`
+- **Usage:**
+
+```kotlin
+if (cameraPermission.shouldShowRationale) {
+    // Show rationale
+}
+```
+
+### request()
+
+- **Description:** Requests the permission.
+- **Type:** `Unit`
+- **Usage:**
+
+```kotlin
+cameraPermission.request()
+```
+
 ## 🚀 What's Next?
 
 - [ ]  Add support for multiple permissions
