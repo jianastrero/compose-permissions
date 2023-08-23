@@ -1,4 +1,5 @@
 import java.io.FileInputStream
+import java.net.URI
 import java.util.*
 
 val localProperties = Properties().apply {
@@ -8,37 +9,76 @@ val localProperties = Properties().apply {
     }
 }
 
-val githubUsername: String? by localProperties
-val githubKey: String? by localProperties
+val ossrhUsername: String? by localProperties
+val ossrhPassword: String? by localProperties
 
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
     id("maven-publish")
+    id("signing")
 }
 
 publishing {
+    repositories {
+        maven {
+            val releaseRepo = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+//            val snapshotRepo = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+
+            name = "OSSRH"
+            url = URI.create(releaseRepo)
+
+            credentials {
+                username = ossrhUsername
+                password = ossrhPassword
+            }
+        }
+    }
     publications {
         create<MavenPublication>("release") {
-            groupId = "dev.jianastrero"
+
+            groupId = "dev.jianastrero.compose-permissions"
             artifactId = "compose-permissions"
-            version = "1.0.1"
+            version = "1.0.0"
 
             afterEvaluate {
                 from(components["release"])
             }
-        }
-    }
-    repositories {
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/jianastrero/compose-permissions")
-            credentials {
-                username = githubUsername
-                password = githubKey
+
+            pom {
+                name.set("Compose Permissions")
+                description.set("A simple library to minimize boilerplate for implementing requesting and checking if permissions are granted or not.")
+                url.set("ttps://github.com/jianastrero/compose-permissions")
+
+                licenses {
+                    license {
+                        name.set("MIT License")
+                        url.set("https://github.com/jianastrero/compose-permissions/blob/main/LICENSE")
+                        distribution.set("repo")
+                    }
+                }
+
+                scm {
+                    url.set("https://github.com/jianastrero/compose-permissions")
+                    connection.set("scm:git@github.com:jianastrero/compose-permissions.git")
+                    developerConnection.set("scm:git@github.com:jianastrero/compose-permissions.git")
+                }
+
+                developers {
+                    developer {
+                        id.set("jianastrero")
+                        name.set("Jian James Astrero")
+                        email.set("jianjamesastrero@gmail.com")
+                        organizationUrl.set("https://jianastrero.dev/")
+                    }
+                }
             }
         }
     }
+}
+
+signing {
+    sign(publishing.publications["release"])
 }
 
 android {
