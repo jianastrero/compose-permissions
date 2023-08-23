@@ -24,7 +24,9 @@
 
 package dev.jianastrero.compose_permissions
 
+import android.app.Activity
 import android.content.pm.PackageManager
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
@@ -44,6 +46,7 @@ import dev.jianastrero.compose_permissions.enumeration.PermissionStatus
  */
 class ComposePermission internal constructor() {
     internal var _value by mutableStateOf(PermissionStatus.Denied)
+    internal var _shouldShowRationale by mutableStateOf(false)
     internal var launch by mutableStateOf<() -> Unit>({})
 
     /**
@@ -66,6 +69,14 @@ class ComposePermission internal constructor() {
         get() = _value == PermissionStatus.Granted
 
     /**
+     * Indicates whether rationale should be shown.
+     *
+     * @return `true` if rationale should be shown, `false` otherwise.
+     */
+    val shouldShowRationale: Boolean
+        get() = _shouldShowRationale
+
+    /**
      * Sends a request to perform an action. This method should be called when it is required to make a request for an action
      * without any additional parameters.
      *
@@ -76,15 +87,10 @@ class ComposePermission internal constructor() {
     }
 }
 
-/**
- * Composes a permission request for a given permission.
- *
- * @param permission The permission to request.
- * @return The composed `ComposePermission` object.
- */
+
 @Composable
 fun composePermission(permission: String): ComposePermission {
-    val context = LocalContext.current
+    val activity = LocalContext.current as Activity
     val composePermission = remember {
         ComposePermission()
     }
@@ -97,11 +103,12 @@ fun composePermission(permission: String): ComposePermission {
         launcher.launch(permission)
     }
 
-    DisposableEffect(context) {
-        composePermission._value = when (ContextCompat.checkSelfPermission(context, permission)) {
+    DisposableEffect(activity) {
+        composePermission._value = when (ContextCompat.checkSelfPermission(activity, permission)) {
             PackageManager.PERMISSION_GRANTED -> PermissionStatus.Granted
             else -> PermissionStatus.Denied
         }
+        composePermission._shouldShowRationale = activity.shouldShowRequestPermissionRationale(permission)
         onDispose { /* Do Nothing */ }
     }
 
