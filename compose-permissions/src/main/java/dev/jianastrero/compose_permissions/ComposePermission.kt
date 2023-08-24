@@ -53,8 +53,6 @@ class ComposePermission internal constructor() {
     internal var launch by mutableStateOf<(Array<String>) -> Unit>({})
 
     /**
-     * Getter for the `value` variable.
-     *
      * Returns a Map of String keys to PermissionStatus values.
      * Each key corresponds to a permission item, and the corresponding value represents the status of that permission.
      *
