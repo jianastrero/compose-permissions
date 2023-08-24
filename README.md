@@ -65,49 +65,87 @@ if (!cameraPermission.isGranted) {
 
 ## Documentation
 
-### value
+#### value
 
-- **Description:** Returns the value of the permission.
+- **Description:**
+  - Returns a Map of String keys to PermissionStatus values.
+  - Each key corresponds to a permission item, and the corresponding value represents the status of that permission.
 - **Type:** `String`
-- **Usage:**
+- **Example:**
+  - `cameraPermission.value`
 
-```kotlin
-cameraPermission.value
-```
+#### isGranted
 
-### isGranted
-
-- **Description:** Returns true if the permission is granted, false otherwise.
+- **Description:**
+  - Determines whether all permission items have been granted.
+  - Returns `true` if all permission items are granted, `false` otherwise.
 - **Type:** `Boolean`
-- **Usage:**
+- **Example:**
+  - `cameraPermission.isGranted`
 
-```kotlin
-if (!cameraPermission.isGranted) {
-    cameraPermission.request()
-}
-```
+#### shouldShowRationale
 
-### shouldShowRationale
-
-- **Description:** Returns true if the permission should show rationale, false otherwise.
+- **Description:**
+  - Indicates whether the rationale should be shown for all permission item.
+  - Returns `true` if the rationale should be shown for all permission item, `false` otherwise.
 - **Type:** `Boolean`
-- **Usage:**
+- **Example:**
+  - `cameraPermission.shouldShowRationale`
 
-```kotlin
-if (cameraPermission.shouldShowRationale) {
-    // Show rationale
-}
-```
+#### request(vararg permissions: String)
 
-### request()
-
-- **Description:** Requests the permission.
+- **Description:**
+  - Request permissions from the user.
+  - `permissions` - The list of permissions to request from the user. Defaults to all permissions.
 - **Type:** `Unit`
-- **Usage:**
+- **Example:**
+  - `cameraPermission.request()`
+  - `cameraPermission.request(android.Manifest.permission.CAMERA)`
 
-```kotlin
-cameraPermission.request()
-```
+##### get(vararg permissions: String)
+
+- **Description:**
+  - Returns a Map of String keys to PermissionStatus values.
+  - Each key corresponds to a permission item, and the corresponding value represents the status of that permission.
+  - `permissions` - The list of permissions to get the status of. Defaults to all permissions.
+  - **_Note: This is an operator function, so it can be called without the `get` keyword._**
+- **Type:** `Map<String, PermissionStatus>`
+- **Example:**
+  - `cameraPermission.get()`
+  - `cameraPermission.get(android.Manifest.permission.CAMERA)`
+
+#### value(vararg permissions: String)
+
+- **Description:**
+  - Returns a Map of String keys to PermissionStatus values.
+  - Each key corresponds to a permission item, and the corresponding value represents the status of that permission.
+  - `permissions` - The list of permissions to get the status of. Defaults to all permissions.
+- **Type:** `Map<String, PermissionStatus>`
+- **Example:**
+  - `cameraPermission.value()`
+  - `cameraPermission.value(android.Manifest.permission.CAMERA)`
+
+#### isGranted(vararg permissions: String)
+
+- **Description:**
+  - Determines whether all permission items have been granted.
+  - Returns `true` if all permission items are granted, `false` otherwise.
+  - `permissions` - The list of permissions to check. Defaults to all permissions.
+- **Type:** `Boolean`
+- **Example:**
+  - `cameraPermission.isGranted()`
+  - `cameraPermission.isGranted(android.Manifest.permission.CAMERA)`
+
+#### shouldShowRationale(vararg permissions: String)
+
+- **Description:**
+  - Indicates whether the rationale should be shown for all permission item.
+  - Returns `true` if the rationale should be shown for all permission item, `false` otherwise.
+  - `permissions` - The list of permissions to check. Defaults to all permissions.
+- **Type:** `Boolean`
+- **Example:**
+  - `cameraPermission.shouldShowRationale()`
+  - `cameraPermission.shouldShowRationale(android.Manifest.permission.CAMERA)`
 
 ## 🚀 What's Next?
 
