@@ -26,7 +26,7 @@ _Read more on [Medium](https://medium.com/@jianastrero/streamline-permission-han
 To integrate "Compose Permissions" into your project, just add the following dependency to your app's `build.gradle` file:
 
 ```kotlin
-implementation("dev.jianastrero.compose-permissions:compose-permissions:1.0.0")
+implementation("dev.jianastrero.compose-permissions:compose-permissions:1.1.0")
 ```
 
 ## Usage
